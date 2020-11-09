@@ -8,7 +8,7 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
-var scores, roundScores, activePlayer, gamePlaying, counter, goalScore;
+var scores, roundScores, activePlayer, gamePlaying, goalScore, diceArray, doubleSixTracker, rollResult;
 
 init();
 
@@ -18,19 +18,31 @@ document.querySelector('.btn-roll').addEventListener('click', function() {
     goalScore = document.querySelector('.setGoal').value;
     //1. Random number
     var dice = Math.floor(Math.random() * 6) + 1;
-    console.log(counter);
 
-    if (dice == 6) {
-      if (counter < 2) {
-        counter += 1;
-      } else if (counter > 1) {
-        document.getElementById('score-' + activePlayer).textContent = '0';
-        nextPlayer();
-      };
-    } else if (dice != 6) {
-      counter = 0;
-    };
-    console.log(counter);
+    //Tracking double 6 roll via counter
+    // if (dice == 6) {
+    //   if (counter < 2) {
+    //     counter += 1;
+    //   } else if (counter > 1) {
+    //     document.getElementById('score-' + activePlayer).textContent = '0';
+    //     nextPlayer();
+    //   };
+    // } else if (dice != 6) {
+    //   counter = 0;
+    // };
+
+    //Tracking double 6 roll via array
+    diceArray.unshift(dice);
+    diceArray.pop();
+    console.log(diceArray);
+
+    //Verify double 6 rolls
+    rollResult = diceArray.every(e => e == 6);
+
+    if (rollResult) {
+      document.getElementById('score-' + activePlayer).textContent = '0';
+      nextPlayer();
+    }
 
     //2. Display result
     var diceDOM = document.querySelector('.dice');
@@ -75,7 +87,7 @@ document.querySelector('.btn-hold').addEventListener('click', function() {
 function nextPlayer() {
   activePlayer === 0 ? activePlayer = 1 : activePlayer = 0;
   roundScore = 0;
-  counter = 0;
+  diceArray = [0,0];
   document.getElementById('current-0').textContent = '0';
   document.getElementById('current-1').textContent = '0';
 
@@ -90,7 +102,7 @@ function init() {
   roundScore = 0;
   activePlayer = 0;
   gamePlaying = true;
-  counter = 0;
+  diceArray = [0,0];
 
   document.querySelector('.dice').style.display = 'none';
   document.querySelector('.setGoal').disabled = false;
